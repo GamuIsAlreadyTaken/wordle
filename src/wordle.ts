@@ -18,8 +18,9 @@ class Word {
     parent: HTMLElement
 
     constructor(parent: HTMLElement, word: string) {
-        this.word = word
+        this.word = /*word*/ 'seems'
         this.parent = parent
+        console.log(this.word)
     }
 
     has(letter: string, word: string, position: number): WordleResult {
@@ -34,7 +35,7 @@ class Word {
 
         word.split('').forEach((letter, index) => {
             const letterType = this.has(letter, rest_of_word, index)
-            if(letterType != WordleResult.WL){
+            if (letterType != WordleResult.WL) {
                 rest_of_word = rest_of_word.replace(letter, '_')
             }
             result.push([letter, letterType])

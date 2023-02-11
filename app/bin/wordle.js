@@ -13,8 +13,9 @@ class Word {
     word;
     parent;
     constructor(parent, word) {
-        this.word = word;
+        this.word = /*word*/ 'seems';
         this.parent = parent;
+        console.log(this.word);
     }
     has(letter, word, position) {
         if (word[position] == letter) {
