@@ -2,19 +2,23 @@
 // ask: letter by letter
 /* input: "abcd" -> word.has("a", pos=0): (NoLetter | WrongPosition | CorrectPosition) */
 const c = (tag) => document.createElement(tag);
+const $ = (locator) => document.querySelector(locator);
 var WordleResult;
 (function (WordleResult) {
     WordleResult["WL"] = "WL";
     WordleResult["WP"] = "WP";
     WordleResult["CP"] = "CP";
 })(WordleResult || (WordleResult = {}));
-//fix seems
 class Word {
     word;
     parent;
+    won;
+    trys;
     constructor(parent, word) {
-        this.word = /*word*/ 'seems';
+        this.word = word;
         this.parent = parent;
+        this.won = false;
+        this.trys = 1;
         console.log(this.word);
     }
     has(letter, word, position) {
@@ -29,13 +33,21 @@ class Word {
     check(word) {
         let result = [];
         let rest_of_word = this.word;
+        // get correct letters
         word.split('').forEach((letter, index) => {
             const letterType = this.has(letter, rest_of_word, index);
-            if (letterType != WordleResult.WL) {
+            if (letterType == WordleResult.CP) {
                 rest_of_word = rest_of_word.replace(letter, '_');
+                result[index] = [letter, letterType];
             }
-            result.push([letter, letterType]);
         });
+        word.split('').forEach((letter, index) => {
+            const letterType = this.has(letter, rest_of_word, index);
+            rest_of_word = rest_of_word.replace(letter, '_');
+            if (result[index] == undefined)
+                result[index] = [letter, letterType];
+        });
+        this.won = result.every(([_, type]) => type == WordleResult.CP);
         return result;
     }
     createLetter(letter, type) {
@@ -54,5 +66,17 @@ class Word {
             hand.appendChild(this.createLetter(...r));
         });
         this.parent.appendChild(hand);
+        if (this.won) {
+            this.win();
+        }
+        else {
+            this.trys++;
+        }
+    }
+    win() {
+        const pannel = $(`#win`);
+        pannel.style.display = 'block';
+        pannel.innerText = pannel.innerText.replace('{}', plural(this.trys, 'intento'));
     }
 }
+const plural = (number, noun) => number != 1 ? `${number} ${noun}s` : `${number} ${noun}`;

@@ -5,21 +5,25 @@
 /* input: "abcd" -> word.has("a", pos=0): (NoLetter | WrongPosition | CorrectPosition) */
 
 const c = (tag: string) => document.createElement(tag)
+const $: (arg0: string) => HTMLElement = (locator: string) => document.querySelector(locator);
 
 enum WordleResult {
     WL = 'WL',
     WP = 'WP',
     CP = 'CP'
 }
-//fix seems
 
 class Word {
     word: string
     parent: HTMLElement
+    won: boolean
+    trys: number
 
     constructor(parent: HTMLElement, word: string) {
-        this.word = /*word*/ 'seems'
+        this.word = word
         this.parent = parent
+        this.won = false
+        this.trys = 1
         console.log(this.word)
     }
 
@@ -33,13 +37,24 @@ class Word {
         let result: [string, WordleResult][] = []
         let rest_of_word = this.word
 
+        // get correct letters
         word.split('').forEach((letter, index) => {
             const letterType = this.has(letter, rest_of_word, index)
-            if (letterType != WordleResult.WL) {
+            if (letterType == WordleResult.CP) {
                 rest_of_word = rest_of_word.replace(letter, '_')
+                result[index] = [letter, letterType]
             }
-            result.push([letter, letterType])
         })
+
+        word.split('').forEach((letter, index) => {
+            const letterType = this.has(letter, rest_of_word, index)
+            rest_of_word = rest_of_word.replace(letter, '_')
+            if (result[index] == undefined)
+                result[index] = [letter, letterType]
+        })
+
+        this.won = result.every(([_, type]) => type == WordleResult.CP)
+
         return result
     }
 
@@ -64,5 +79,19 @@ class Word {
         })
 
         this.parent.appendChild(hand)
+        if (this.won) {
+            this.win()
+        } else {
+            this.trys++
+        }
+    }
+
+    win() {
+        const pannel = $(`#win`)
+        pannel.style.display = 'block'
+        pannel.innerText = pannel.innerText.replace('{}', plural(this.trys, 'intento'))
     }
 }
+
+const plural = (number: number, noun: string) =>
+    number != 1 ? `${number} ${noun}s` : `${number} ${noun}` 

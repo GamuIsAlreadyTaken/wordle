@@ -9,7 +9,7 @@ body {
 }
 
 header {
-    font-size: 50px;
+    font-size: 20px;
     margin: 40px;
 }
 
@@ -76,8 +76,14 @@ header {
     outline: none;
     margin: 5px;
 }
-/* #play {
-    height: 100%;
-    border: none;
-    border-radius: 0 var(--radius) var(--radius) 0;
-} */
+
+
+#win {
+    display: none;
+    position: absolute;
+    background-color: lime;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    border-radius: 3px;
+}

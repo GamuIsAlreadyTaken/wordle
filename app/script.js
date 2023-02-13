@@ -1,5 +1,4 @@
 
-const $ = locator => document.querySelector(locator);
 const wordle_length = 5;
 
 (async () => {
